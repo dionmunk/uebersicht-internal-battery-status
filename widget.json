@@ -1,0 +1,6 @@
+{
+    "name": "Internal Battery Status",
+    "description": "Shows the built-in battery's charge state, level, and time remaining with a charge bar.",
+    "author": "Dion Munk",
+    "email": "dion@dionmunk.com"
+}
