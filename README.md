@@ -6,7 +6,7 @@ An internal battery widget for [Übersicht](http://tracesof.net/uebersicht/). It
 
 ## Screenshot
 
-![Screenshot](screenshots/screenshot.png)
+![Screenshot](screenshot.png)
 
 ## Installation
 
