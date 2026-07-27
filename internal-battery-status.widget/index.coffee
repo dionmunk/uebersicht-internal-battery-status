@@ -1,4 +1,7 @@
-command: "pmset -g batt"
+command: "internal-battery-status.widget/lib/battery.sh"
+
+# Enable or disable this widget.
+widgetEnabled: true   # true | false
 
 refreshFrequency: '10s'
 
@@ -63,6 +66,28 @@ style: """
   .state-text
     text-transform: capitalize
 
+  // Charging bolt shown only while charging (toggled in update); green to match
+  // the charging bar. The SF Symbol bolt.fill, rendered to a PNG on first run
+  // (lib/render-bolt.swift) and used as a mask so it takes the theme colour.
+  .charge-bolt
+    display: none
+    width: 10px
+    height: 14px
+    margin-left: 4px
+    vertical-align: -2px
+    background: var(--status-ok, var(--green, #34C759))
+    -webkit-mask-image: url(internal-battery-status.widget/lib/icons/bolt.fill.ink.png)
+    -webkit-mask-repeat: no-repeat
+    -webkit-mask-position: center
+    -webkit-mask-size: contain
+    mask-image: url(internal-battery-status.widget/lib/icons/bolt.fill.ink.png)
+    mask-repeat: no-repeat
+    mask-position: center
+    mask-size: contain
+
+  .charge-bolt.on
+    display: inline-block
+
   // Three columns of equal share — keeps spacing consistent with the other widgets.
   // State on the left, remaining in the middle, level on the far right.
   .col-percent,
@@ -118,7 +143,7 @@ render: -> """
       <div class="widget-title">Internal Battery</div>
       <table class="stats-container" width="100%">
         <tr>
-          <td class="stat col-state"><span class="state-text"></span></td>
+          <td class="stat col-state"><span class="state-text"></span><span class="charge-bolt"></span></td>
           <td class="stat col-remaining"><span class="remaining"></span></td>
           <td class="stat col-percent"><span class="percent"></span></td>
         </tr>
@@ -136,6 +161,11 @@ render: -> """
 """
 
 update: (output, domEl) ->
+  # Hide entirely when disabled.
+  if not @widgetEnabled
+    $(domEl).css('display', 'none')
+    return
+  $(domEl).css('display', '')
   # pmset line looks like: "100%; charged; 0:00 remaining present: true"
   m = output.match /(\d+)%;\s*([\w ]+?);(?:\s*([0-9]+:[0-9]+|\(no estimate\)))?/
   return unless m
@@ -152,14 +182,17 @@ update: (output, domEl) ->
 
   div.find('.percent').text "#{percent}%"
   div.find('.state-text').text state
+  div.find('.charge-bolt').toggleClass('on', state is 'charging')
   div.find('.remaining').text(if hasRemaining then remaining else '')
   div.find('.remaining-label').text(if hasRemaining then 'remaining' else '')
   div.find('.bar-charge').css "width", "#{percent}%"
 
-  # Bar color reflects the charge level — the inverse of Storage's fill scale
-  # (a low battery is the severe end, like a full disk is for storage).
+  # Charging shows a green bar to signal it's filling up (even on a low battery);
+  # otherwise the color reflects the charge level — the inverse of Storage's fill
+  # scale (a low battery is the severe end, like a full disk is for storage).
   level =
-    if percent <= 10 then 'status-critical'
+    if state is 'charging' then 'status-ok'
+    else if percent <= 10 then 'status-critical'
     else if percent <= 25 then 'status-elevated'
     else if percent <= 40 then 'status-warn'
     else 'status-ok'
