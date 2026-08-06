@@ -6,9 +6,10 @@ widgetEnabled: true   # true | false
 refreshFrequency: '10s'
 
 style: """
-  // grid: col 2 · row 1 · 1×1  (see LAYOUT.md)
-  top 10px
-  left 340px
+  // grid: col 1 · row 8 · 1×1, below the top-battery widget (see LAYOUT.md)
+  // top = 634 (top-battery's top) + 122 (its real height) + 10 (gap)
+  top 766px
+  left 10px
 
   color var(--text, #fff)
   text-shadow: 0 1px 1px rgba(20, 1, 1, 0.2)   // inherits to all text elements
@@ -22,14 +23,14 @@ style: """
     backdrop-filter: blur(var(--panel-blur, 48px))
     border-radius 10px
     box-sizing: border-box
-    min-height: 80px       // base minimum widget height (see LAYOUT.md)
+    min-height: var(--grid-unit, 80px)       // base minimum widget height (see LAYOUT.md)
 
   .panel-stats
     padding 10px 10px 12px
     display: flex          // lets stats-inner fill the 80px panel height
 
   .stats-inner
-    width: 300px
+    width: calc(var(--grid-col, 320px) - 20px)
     text-align: left
     position: relative
     display: flex
