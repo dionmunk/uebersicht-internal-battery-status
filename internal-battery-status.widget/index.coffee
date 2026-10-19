@@ -67,14 +67,15 @@ style: """
   .state-text
     text-transform: capitalize
 
-  // Charging bolt shown only while charging (toggled in update); green to match
-  // the charging bar. The SF Symbol bolt.fill, rendered to a PNG on first run
-  // (lib/render-bolt.swift) and used as a mask so it takes the theme colour.
+  // Charging bolt in front of the percentage, shown only while charging (toggled
+  // in update); green to match the charging bar, and placed like the bolt in
+  // bluetooth-battery-status. The SF Symbol bolt.fill, rendered to a PNG on first
+  // run (lib/render-bolt.swift) and used as a mask so it takes the theme colour.
   .charge-bolt
     display: none
     width: 10px
     height: 14px
-    margin-left: 4px
+    margin-right: 4px
     vertical-align: -2px
     background: var(--status-ok, var(--green, #34C759))
     -webkit-mask-image: url(internal-battery-status.widget/lib/icons/bolt.fill.ink.png)
@@ -144,9 +145,9 @@ render: -> """
       <div class="widget-title">Internal Battery</div>
       <table class="stats-container" width="100%">
         <tr>
-          <td class="stat col-state"><span class="state-text"></span><span class="charge-bolt"></span></td>
+          <td class="stat col-state"><span class="state-text"></span></td>
           <td class="stat col-remaining"><span class="remaining"></span></td>
-          <td class="stat col-percent"><span class="percent"></span></td>
+          <td class="stat col-percent"><span class="charge-bolt"></span><span class="percent"></span></td>
         </tr>
         <tr>
           <td class="label col-state">state</td>
